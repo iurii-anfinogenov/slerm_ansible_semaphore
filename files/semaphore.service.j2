@@ -1,0 +1,19 @@
+[Unit]
+Documentation=https://github.com/semaphoreui/semaphore
+Description=Semaphore UI
+Requires=network.target
+After=network.target syslog.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/semaphore server --config {{ semaphore_config_path }}
+ExecStop=/bin/kill -s QUIT $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+
