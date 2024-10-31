@@ -1,0 +1,50 @@
+---
+# tasks file for semaphore_postgres
+- name: Update apt cache
+  apt:
+    update_cache: true
+- name: Install dependencies
+  apt:
+    name:
+      - curl
+      - git
+    state: present
+
+- name: Download Semaphore deb package
+  get_url:
+    url: https://github.com/semaphoreui/semaphore/releases/download/v2.10.35/semaphore_2.10.35_linux_amd64.deb
+    dest: /tmp/semaphore_2.10.35_linux_amd64.deb
+
+- name: Copy Semaphore systemd service file
+  template:
+    src: semaphore.service.j2
+    dest: /etc/systemd/system/semaphore.service
+    mode: '0644'
+
+- name: Ensure Semaphore configuration directory exists
+  file:
+    path: /etc/semaphore
+    state: directory
+    owner: root
+    mode: '0755'
+
+- name: Deploy Semaphore configuration file from template
+  template:
+    src: config.json.j2
+    dest: "{{ semaphore_config_path }}"
+    owner: root
+    mode: '0644'
+
+- name: Install Semaphore from local deb package
+  apt:
+    deb: /tmp/semaphore_2.10.35_linux_amd64.deb
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: true
+
+- name: Enable and start Semaphore service
+  systemd:
+    name: semaphore
+    enabled: true
+    state: started

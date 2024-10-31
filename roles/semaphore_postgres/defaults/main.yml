@@ -1,0 +1,8 @@
+---
+# defaults file for semaphore_postgres
+    semaphore_version: "latest"
+    db_name: "semaphoredb"
+    db_user: "semaphore"
+    db_passwd: "semaphorepass"
+    semaphore_config_path: "/etc/semaphore/config.json"
+    semaphore_service_path: "/etc/systemd/system/semaphore.service"
